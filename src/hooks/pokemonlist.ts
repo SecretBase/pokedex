@@ -5,8 +5,8 @@ import { PokemonItem } from "../types/PokemonItem"
 const POKEMON_LIST_CACHE_KEY = "/pokemon"
 
 interface Pagination {
-  limit: number
-  page: number
+  limit?: number
+  page?: number
 }
 
 interface PokemonList {

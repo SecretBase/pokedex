@@ -1,29 +1,59 @@
-import React from "react"
-import { usePokemonList } from "../../hooks/pokemonlist"
+import React, { useState, useCallback } from "react"
 import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Pagination from "react-bootstrap/Pagination"
+import Spinner from "react-bootstrap/Spinner"
+
 import Pokemon from "../Pokemon"
+import { usePokemonList } from "../../hooks/pokemonlist"
 
 const PokemonList = () => {
-  const { isLoading, resolvedData } = usePokemonList()
+  const [limit] = useState(20)
+  const [page, setPage] = useState(1)
 
-  if (isLoading) return null
+  const { isFetching, resolvedData } = usePokemonList({ limit, page })
 
-  const { results, count } = resolvedData.data
+  const { results, count } = resolvedData?.data ?? {}
+
+  const totalPage = Math.ceil(count / limit)
+
+  const prev = useCallback((e) => {
+    e.preventDefault()
+    setPage((currentPage) => currentPage - 1)
+  }, [])
+
+  const next = useCallback((e) => {
+    e.preventDefault()
+    setPage((currentPage) => currentPage + 1)
+  }, [])
 
   return (
     <Container fluid>
       <h1 className="text-center">Pokemon</h1>
       <Row style={{ listStyleType: "none" }}>
-        {results.map((pokemon) => (
+        {results?.map((pokemon) => (
           <Col key={pokemon.url} xs={3} style={{ marginBottom: 16 }}>
             <Pokemon {...pokemon} />
           </Col>
         ))}
       </Row>
-      <Pagination></Pagination>
+      <div
+        style={{ height: "2rem" }}
+        className="d-flex justify-content-center mb-3"
+      >
+        {isFetching && <Spinner animation="grow" variant="danger" />}
+      </div>
+      <Pagination className="justify-content-center">
+        <Pagination.Prev disabled={page === 1 || isFetching} onClick={prev} />
+        <Pagination.Item disabled>{page}</Pagination.Item>
+        <Pagination.Item disabled>of</Pagination.Item>
+        <Pagination.Item disabled>{totalPage}</Pagination.Item>
+        <Pagination.Next
+          disabled={page === totalPage || isFetching}
+          onClick={next}
+        />
+      </Pagination>
     </Container>
   )
 }
