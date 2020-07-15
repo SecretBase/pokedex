@@ -8,10 +8,7 @@ import {
 } from "react-router-dom"
 import { ReactQueryConfigProvider, ReactQueryProviderConfig } from "react-query"
 import { ReactQueryDevtools } from "react-query-devtools"
-
-import Spinner from "react-bootstrap/Spinner"
-
-const LazyPokemonList = lazy(() => import("./components/PokemonList"))
+import PokemonList from "./components/PokemonList"
 
 export const App = () => {
   const queryConfig = useMemo<ReactQueryProviderConfig>(
@@ -26,14 +23,22 @@ export const App = () => {
   )
   return (
     <ReactQueryConfigProvider config={queryConfig}>
-      <Suspense fallback={<Spinner animation="grow" variant="danger" />}>
-        <Router>
-          <Switch>
-            <Route path="/" exact render={() => <Redirect to="/pokemon" />} />
-            <Route path="/pokemon" component={LazyPokemonList} />
-          </Switch>
-        </Router>
-      </Suspense>
+      <Router>
+        <Switch>
+          <Route
+            path="/"
+            exact
+            render={() => {
+              console.log("here")
+              return (
+                <Redirect to={{ pathname: "/pokemon", search: "?page=1" }} />
+              )
+            }}
+          />
+          <Route path="/pokemon" exact component={PokemonList} />
+        </Switch>
+      </Router>
+
       {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
       <footer className="text-center">
         Pokémon and Pokémon character names are trademarks of Nintendo.

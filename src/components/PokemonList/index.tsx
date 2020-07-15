@@ -4,13 +4,19 @@ import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Pagination from "react-bootstrap/Pagination"
 import Spinner from "react-bootstrap/Spinner"
+import { useLocation, useHistory, Redirect } from "react-router-dom"
 
 import Pokemon from "../Pokemon"
 import { usePokemonList } from "../../hooks/pokemonlist"
 
 const PokemonList = () => {
+  const history = useHistory()
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
   const [limit] = useState(20)
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(
+    queryParams.get("page") ? parseInt(queryParams.get("page"), 10) : 1
+  )
 
   const { isFetching, resolvedData, isLoading } = usePokemonList({
     limit,
@@ -21,15 +27,23 @@ const PokemonList = () => {
 
   const totalPage = Math.ceil(count / limit)
 
-  const prev = useCallback((e) => {
-    e.preventDefault()
-    setPage((currentPage) => currentPage - 1)
-  }, [])
+  const prev = useCallback(
+    (e) => {
+      e.preventDefault()
+      setPage((currentPage) => currentPage - 1)
+      history.push({ pathname: "/pokemon", search: `?page=${page - 1}` })
+    },
+    [page, history.push]
+  )
 
-  const next = useCallback((e) => {
-    e.preventDefault()
-    setPage((currentPage) => currentPage + 1)
-  }, [])
+  const next = useCallback(
+    (e) => {
+      e.preventDefault()
+      setPage((currentPage) => currentPage + 1)
+      history.push({ pathname: "/pokemon", search: `?page=${page + 1}` })
+    },
+    [page, history.push]
+  )
 
   return (
     <Container fluid>

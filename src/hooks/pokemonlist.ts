@@ -24,7 +24,7 @@ export const usePokemonList = (pagination?: Pagination) => {
       api.get<PokemonList>(key, {
         params: {
           limit: limit,
-          offset: page * limit,
+          offset: (page - 1) * limit,
         },
       })
   )
