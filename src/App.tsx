@@ -35,6 +35,9 @@ export const App = () => {
         </Router>
       </Suspense>
       {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
+      <footer className="text-center">
+        Pokémon and Pokémon character names are trademarks of Nintendo.
+      </footer>
     </ReactQueryConfigProvider>
   )
 }

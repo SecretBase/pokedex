@@ -12,7 +12,10 @@ const PokemonList = () => {
   const [limit] = useState(20)
   const [page, setPage] = useState(1)
 
-  const { isFetching, resolvedData } = usePokemonList({ limit, page })
+  const { isFetching, resolvedData, isLoading } = usePokemonList({
+    limit,
+    page,
+  })
 
   const { results, count } = resolvedData?.data ?? {}
 
@@ -44,16 +47,18 @@ const PokemonList = () => {
       >
         {isFetching && <Spinner animation="grow" variant="danger" />}
       </div>
-      <Pagination className="justify-content-center">
-        <Pagination.Prev disabled={page === 1 || isFetching} onClick={prev} />
-        <Pagination.Item disabled>{page}</Pagination.Item>
-        <Pagination.Item disabled>of</Pagination.Item>
-        <Pagination.Item disabled>{totalPage}</Pagination.Item>
-        <Pagination.Next
-          disabled={page === totalPage || isFetching}
-          onClick={next}
-        />
-      </Pagination>
+      {!isLoading && (
+        <Pagination className="justify-content-center">
+          <Pagination.Prev disabled={page === 1 || isFetching} onClick={prev} />
+          <Pagination.Item disabled>{page}</Pagination.Item>
+          <Pagination.Item disabled>of</Pagination.Item>
+          <Pagination.Item disabled>{totalPage}</Pagination.Item>
+          <Pagination.Next
+            disabled={page === totalPage || isFetching}
+            onClick={next}
+          />
+        </Pagination>
+      )}
     </Container>
   )
 }
